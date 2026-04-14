@@ -1,0 +1,24 @@
+1 terminal:
+source /opt/ros/melodic/setup.bash
+source ~/workspace/catkin_ws_ov/devel/setup.bash
+roslaunch ov_msckf subscribe.launch config:=euroc_mav
+roslaunch ov_msckf subscribe.launch config:=tum_vi
+roslaunch ov_msckf subscribe.launch config:=drone_sim
+
+2 terminal:
+source /opt/ros/melodic/setup.bash
+rviz -d ~/workspace/catkin_ws_ov/src/open_vins/ov_msckf/launch/display.rviz
+
+3 terminal:
+source /opt/ros/melodic/setup.bash
+rosbag play ~/datasets/EuRoC/V1_01_easy.bag
+rosbag play ~/datasets/EuRoC/dataset-room1_512_16.bag
+
+
+rostopic echo -p /ov_msckf/poseimu > est.csv
+rostopic hz /ov_msckf/poseimu
+rostopic hz /cam0/image_raw
+rostopic hz /imu0
+rostopic echo -n 5 /imu0
+rosrun image_view extract_images _sec_per_frame:=0.01 image:=/cam0/image_raw
+///home/krrr/workspace/catkin_ws_ov/src/open_vins/config
